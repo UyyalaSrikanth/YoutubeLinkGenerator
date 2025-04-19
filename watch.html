@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Opening in YouTube App...</title>
+  <script>
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const videoId = urlParams.get('id');
+      if (videoId) {
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const deepLink = isIOS
+          ? `youtube://watch?v=${videoId}`
+          : `intent://www.youtube.com/watch?v=${videoId}#Intent;package=com.google.android.youtube;scheme=https;end`;
+        window.location.replace(deepLink);
+      } else {
+        document.body.innerHTML = "<h2>Invalid or missing video ID.</h2>";
+      }
+    };
+  </script>
+</head>
+<body>
+  <p>Redirecting to YouTube app...</p>
+</body>
+</html>
