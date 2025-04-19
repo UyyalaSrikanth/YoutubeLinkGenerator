@@ -3,23 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <title>Opening in YouTube App...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+    }
+    
+    h1 {
+      color: #ff0000;
+      margin-bottom: 1rem;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #ff0000;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .fallback-link {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Redirecting to YouTube...</h1>
+    <div class="spinner"></div>
+    <p>You should be automatically redirected to the YouTube app to watch the video.</p>
+    <p>If you're not redirected, make sure you have the YouTube app installed.</p>
+    
+    <div class="fallback-link" id="fallbackLink">
+      <p>If the app doesn't open, you can watch the video here:</p>
+      <a id="youtubeLink" href="#" target="_blank">Open in YouTube</a>
+    </div>
+  </div>
+
   <script>
     window.onload = function () {
       const urlParams = new URLSearchParams(window.location.search);
       const videoId = urlParams.get('id');
+      
       if (videoId) {
+        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        document.getElementById('youtubeLink').href = youtubeUrl;
+        
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         const deepLink = isIOS
           ? `youtube://watch?v=${videoId}`
           : `intent://www.youtube.com/watch?v=${videoId}#Intent;package=com.google.android.youtube;scheme=https;end`;
+        
+        // Try to open the deep link
         window.location.replace(deepLink);
+        
+        // Fallback after 2 seconds if still on page
+        setTimeout(() => {
+          window.location.href = youtubeUrl;
+        }, 2000);
       } else {
-        document.body.innerHTML = "<h2>Invalid or missing video ID.</h2>";
+        document.querySelector('.container').innerHTML = `
+          <h1>Error</h1>
+          <p>Invalid or missing video ID.</p>
+          <a href="/">Go back to generator</a>
+        `;
       }
     };
   </script>
-</head>
-<body>
-  <p>Redirecting to YouTube app...</p>
 </body>
 </html>

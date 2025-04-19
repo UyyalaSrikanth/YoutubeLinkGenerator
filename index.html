@@ -4,17 +4,320 @@
   <meta charset="UTF-8">
   <title>YouTube Deep Link Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Generate deep links to open YouTube videos directly in the mobile app from any browser">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>YouTube Link Opener - Open YouTube Directly in App</title>
+<meta name="description" content="A tool to open YouTube videos directly in the app from any link. No more browser redirection!">
+
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-    input, button { padding: 10px; width: 90%; margin: 10px auto; font-size: 16px; }
-    .link-box { margin-top: 20px; word-break: break-all; }
+    :root {
+      --primary-color: #ff0000;
+      --primary-dark: #cc0000;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #606060;
+      --white: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--light-gray);
+      padding: 0;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      width: 100%;
+    }
+    
+    header {
+      background-color: var(--white);
+      box-shadow: var(--shadow);
+      padding: 1.rem 0;
+      margin-bottom: 1rem;
+      
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      font-size: 3.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      color: var(--dark-gray);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+    
+    .card {
+      background-color: var(--white);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      text-align: left;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid var(--medium-gray);
+      border-radius: 6px;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    
+    input[type="text"]:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .result-container {
+      display: none;
+      margin-top: 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .result-box {
+      background-color: var(--light-gray);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+      word-break: break-all;
+      position: relative;
+    }
+    
+    .result-box input {
+      background-color: var(--white);
+      cursor: pointer;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .copy-btn:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .feature {
+      background-color: var(--white);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+    
+    .feature h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .feature p {
+      color: var(--dark-gray);
+      font-size: 0.95rem;
+    }
+    
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    footer {
+      background-color: var(--white);
+      padding: 1.5rem;
+      text-align: center;
+      margin-top: auto;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    footer p {
+      color: var(--dark-gray);
+      font-size: 0.9rem;
+    }
+    
+    .how-to-use {
+      text-align: left;
+      margin-top: 2rem;
+    }
+    
+    .how-to-use h2 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    .how-to-use ol {
+      padding-left: 1.5rem;
+    }
+    
+    .how-to-use li {
+      margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .card {
+        padding: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h2>YouTube App Link Generator</h2>
-  <input type="text" id="yturl" placeholder="Paste YouTube Link">
-  <button onclick="generateLink()">Generate Link</button>
-  <div class="link-box" id="outputLink"></div>
+  <header>
+    <div class="container">
+      <h1>YouTube Deep <h1>Link Generator</h1></h1>
+      <p class="subtitle">Create links that open YouTube videos directly in the mobile app</p>
+      
+    </div>
+  </header>
+  
+  <main class="container">
+    <div class="card">
+      <div class="input-group">
+        <label for="yturl">YouTube Video URL</label>
+        <input type="text" id="yturl" placeholder="Paste YouTube link here (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)">
+      </div>
+      
+      <button onclick="generateLink()">Generate App Link</button>
+      
+      <div class="result-container" id="resultContainer">
+        <h3>Your Deep Link</h3>
+        <p>Share this link to open the video directly in the YouTube app:</p>
+        <div class="result-box">
+          <input type="text" id="outputLink" onclick="this.select()" readonly>
+          <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="how-to-use">
+      <h2>How It Works</h2>
+      <ol>
+        <li>Paste any YouTube video URL in the input field above</li>
+        <li>Click "Generate App Link" to create your deep link</li>
+        <li>Share the generated link with others</li>
+        <li>When opened on mobile devices, the video will launch directly in the YouTube app</li>
+      </ol>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile Optimized</h3>
+        <p>
+            <span> <b>Coming soon...</b></span> <br>
+            Works seamlessly on both Android and iOS devices, automatically detecting the platform to provide the correct deep link format.</p>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Conversion</h3>
+        <p>Generate deep links in seconds with our lightning-fast processing. No waiting, no complicated steps.</p>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <h3>Easy Sharing</h3>
+        <p>Copy the generated link with one click and share it anywhere - messages, emails, or social media.</p>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="container">
+      <p>© 2025 YouTube Deep Link Generator | This tool is not affiliated with YouTube or Google</p>
+    </div>
+  </footer>
 
   <script>
     function generateLink() {
@@ -25,14 +328,41 @@
 
       if (videoId) {
         const generatedLink = `${window.location.origin}/watch.html?id=${videoId}`;
-        document.getElementById("outputLink").innerHTML = `
-          <p><strong>Share this link:</strong></p>
-          <input type="text" value="${generatedLink}" onclick="this.select()" readonly>
-        `;
+        document.getElementById("outputLink").value = generatedLink;
+        document.getElementById("resultContainer").style.display = "block";
+        
+        // Scroll to results
+        document.getElementById("resultContainer").scrollIntoView({ 
+          behavior: 'smooth' 
+        });
       } else {
-        alert("Invalid YouTube URL");
+        alert("Please enter a valid YouTube URL");
+        document.getElementById("yturl").focus();
       }
     }
+    
+    function copyToClipboard() {
+      const copyText = document.getElementById("outputLink");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      
+      // Change button text temporarily
+      const copyBtn = document.querySelector(".copy-btn");
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = "Copied!";
+      
+      setTimeout(() => {
+        copyBtn.textContent = originalText;
+      }, 2000);
+    }
+    
+    // Allow pressing Enter key to generate link
+    document.getElementById("yturl").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        generateLink();
+      }
+    });
   </script>
 </body>
 </html>
